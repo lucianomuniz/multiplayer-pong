@@ -1,10 +1,11 @@
 // Canvas Related
 const canvas = document.createElement("canvas");
 const context = canvas.getContext("2d");
-const socket = io();
+const socket = io("/pong");
 let isReferee = false;
 let paddleIndex = 0;
 
+// Canvas Dimensions
 let width = 500;
 let height = 700;
 
@@ -17,8 +18,8 @@ let trajectoryX = [0, 0];
 let playerMoved = false;
 
 // Ball
-let ballX = 250;
-let ballY = 350;
+let ballX = width / 2;
+let ballY = height / 2;
 let ballRadius = 5;
 let ballDirection = 1;
 
@@ -68,8 +69,8 @@ function renderCanvas() {
   // Dashed Center Line
   context.beginPath();
   context.setLineDash([4]);
-  context.moveTo(0, 350);
-  context.lineTo(500, 350);
+  context.moveTo(0, height / 2);
+  context.lineTo(width, height / 2);
   context.strokeStyle = "grey";
   context.stroke();
 
@@ -89,7 +90,8 @@ function renderCanvas() {
 function ballReset() {
   ballX = width / 2;
   ballY = height / 2;
-  speedY = 3;
+  speedY = 2;
+  speedX = 0;
 
   socket.emit("ballMove", {
     ballX,
@@ -139,7 +141,7 @@ function ballBoundaries() {
       trajectoryX[0] = ballX - (paddleX[0] + paddleDiff);
       speedX = trajectoryX[0] * 0.3;
     } else {
-      // Reset Ball, add to Computer Score
+      // Reset Ball, add to Player 2 Score
       ballReset();
       score[1]++;
     }
